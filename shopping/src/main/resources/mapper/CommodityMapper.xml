@@ -20,10 +20,11 @@
             <include refid="commodityList"/>
         FROM
             commodity
-        <if test="null != storeId">
-        WHERE
-            storeId = #{storeId}
-        </if>
+        <where>
+            <if test="null != storeId">
+                storeId = #{storeId}
+            </if>
+        </where>
         LIMIT
             #{page.index}, #{page.pageSize}
     </select>
@@ -92,9 +93,10 @@
             COUNT(id)
         FROM
             commodity
-        <if test="null != storeId">
-        WHERE
-            storeId = #{storeId}
-        </if>
+        <where>
+            <if test="null != storeId">
+                storeId = #{storeId}
+            </if>
+        </where>
     </select>
 </mapper>

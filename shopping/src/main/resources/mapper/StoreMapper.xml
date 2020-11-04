@@ -14,11 +14,11 @@
             <include refid="storeList"/>
         FROM
             store
-    <where>
-        <if test="null != null and '' != name">
-            name = #{name}
-        </if>
-    </where>
+        <where>
+            <if test="null != null and '' != name">
+                name = #{name}
+            </if>
+        </where>
         LIMIT
             #{page.index}, #{page.pageSize}
     </select>

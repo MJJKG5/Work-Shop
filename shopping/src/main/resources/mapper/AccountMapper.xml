@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.shop.repository.AccountMapper">
+    <resultMap id="accountMap" type="com.gp.shop.model.Account">
+        <id column="id" property="id"/>
+        <result column="nickname" property="nickname"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="status" property="status"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="registerTime" property="registerTime"/>
+    </resultMap>
+
+    <sql id="accountList">id, nickname, username, status, phone, email, registerTime</sql>
+
+    <select id="queryByList" resultMap="accountMap">
+        SELECT
+            <include refid="accountList"/>
+        FROM
+            account
+        LIMIT
+            #{page.index}, #{page.pageSize}
+    </select>
+
+    <select id="queryById" resultType="com.gp.shop.model.Account">
+        SELECT
+            id, nickname, username, password, status, phone, email, registerTime
+        FROM
+            account
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="queryByUsername" resultType="com.gp.shop.model.Account">
+        SELECT
+            id, nickname, username, password, status, phone, email, registerTime
+        FROM
+            account
+        WHERE
+            username = #{username}
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO account
+            (nickname, username, password, phone, email)
+        VALUES
+            (#{account.nickname}, #{account.username}, #{account.password}, #{account.phone}, #{account.email})
+    </insert>
+
+    <update id="update">
+        UPDATE account
+        <set>
+            <if test="null != account.nickname and '' != account.nickname">
+                nickname = #{account.nickname},
+            </if>
+            <if test="null != account.status and '' != account.status">
+                status = #{account.status},
+            </if>
+            <if test="null != account.phone and '' != account.phone">
+                status = #{account.phone},
+            </if>
+            <if test="null != account.email and '' != account.email">
+                status = #{account.email}
+            </if>
+        </set>
+        WHERE
+            id = #{account.id}
+    </update>
+
+    <update id="updateById">
+        UPDATE
+            account
+        SET
+            password = #{password}
+        WHERE
+            id = #{id}
+    </update>
+
+    <update id="updateByUserName">
+        UPDATE
+            account
+        SET
+            password = #{password}
+        WHERE
+            username = #{username}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM account WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(id) FROM account
+    </select>
+</mapper>

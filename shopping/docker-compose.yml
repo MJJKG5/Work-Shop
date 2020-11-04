@@ -1,0 +1,16 @@
+version: '3.8'
+networks:
+  mysql_net:
+    external: true
+services:
+  tomcat:
+    image: tomcat
+    container_name: shopping
+    restart: always
+    ports:
+      - "8086:8080"
+    networks:
+      - mysql_net
+    volumes:
+      - ./package:/usr/local/tomcat/webapps
+      - /Users/mjj/img:/usr/img

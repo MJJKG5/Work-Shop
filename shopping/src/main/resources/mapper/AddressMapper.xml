@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.shop.repository.AddressMapper">
+    <resultMap id="addressMap" type="com.gp.shop.model.Address">
+        <id column="id" property="id"/>
+        <result column="to" property="to"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="createTime" property="createTime"/>
+        <result column="accountId" property="accountId"/>
+    </resultMap>
+
+    <sql id="addressList">id, `to`, phone, address, createTime, accountId</sql>
+
+    <select id="queryByAccountId" resultMap="addressMap">
+        SELECT
+            <include refid="addressList"/>
+        FROM
+            address
+        WHERE
+            accountId = #{accountId}
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO address
+            (`to`, phone, address, accountId)
+        VALUES
+            (#{address.to}, #{address.phone}, #{address.address}, #{address.accountId})
+    </insert>
+
+    <update id="update">
+        UPDATE address
+        <set>
+            <if test="null != address.to and '' != address.to">
+                `to` = #{address.to},
+            </if>
+            <if test="null != address.phone and '' != address.phone">
+                phone = #{address.phone},
+            </if>
+            <if test="null != address.address and '' != address.address">
+                address = #{address.address}
+            </if>
+        </set>
+        WHERE
+            id = #{address.id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM address WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(id) FROM address
+    </select>
+</mapper>

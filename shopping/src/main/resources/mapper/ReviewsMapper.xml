@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.shop.repository.ReviewsMapper">
+    <resultMap id="reviewsMap" type="com.gp.shop.model.Reviews">
+        <id column="id" property="id"/>
+        <result column="message" property="message"/>
+        <result column="createTime" property="createTime"/>
+        <result column="commId" property="commId"/>
+        <result column="accountId" property="accountId"/>
+    </resultMap>
+
+    <sql id="reviewsList">id, message, createTime, commId, accountId</sql>
+
+    <select id="queryByList" resultMap="reviewsMap">
+        SELECT
+            <include refid="reviewsList"/>
+        FROM
+            reviews
+        WHERE
+            commId = #{commId}
+        LIMIT
+            #{page.index}, #{page.pageSize}
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reviews
+            (message, commId, accountId)
+        VALUES
+            (#{reviews.message}, #{reviews.commId}, #{reviews.accountId})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM reviews WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(id) FROM reviews WHERE commId = #{commId}
+    </select>
+</mapper>

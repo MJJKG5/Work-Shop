@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.shop.repository.CommodityMapper">
+    <resultMap id="commodityMap" type="com.gp.shop.model.Commodity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="status" property="status"/>
+        <result column="inventory" property="inventory"/>
+        <result column="price" property="price"/>
+        <result column="url" property="url"/>
+        <result column="addTime" property="addTime"/>
+        <result column="intro" property="intro"/>
+        <result column="storeId" property="storeId"/>
+    </resultMap>
+
+    <sql id="commodityList">id, `name`, status, inventory, price, url, addTime, intro, storeId</sql>
+
+    <select id="queryByList" resultMap="commodityMap">
+        SELECT
+            <include refid="commodityList"/>
+        FROM
+            commodity
+        <if test="null != storeId">
+        WHERE
+            storeId = #{storeId}
+        </if>
+        LIMIT
+            #{page.index}, #{page.pageSize}
+    </select>
+
+    <select id="queryByIds" resultMap="commodityMap">
+        SELECT
+            <include refid="commodityList"/>
+        FROM
+            commodity
+        WHERE
+            id
+        IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryById" resultType="com.gp.shop.model.Commodity">
+        SELECT
+            <include refid="commodityList"/>
+        FROM
+            commodity
+        WHERE
+            id = #{id}
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO commodity
+            (`name`, inventory, price, url, intro, storeId)
+        VALUES
+            (#{commodity.name}, #{commodity.inventory}, #{commodity.price}, #{commodity.url}, #{commodity.intro}, #{commodity.storeId})
+    </insert>
+
+    <update id="update">
+        UPDATE commodity
+        <set>
+            <if test="null != commodity.name and '' != commodity.name">
+                `name` = #{commodity.name},
+            </if>
+            <if test="null != commodity.status and '' != commodity.status">
+                status = #{commodity.status},
+            </if>
+            <if test="null != commodity.inventory">
+                inventory = #{commodity.inventory},
+            </if>
+            <if test="null != commodity.price">
+                price = #{commodity.price},
+            </if>
+            <if test="null != commodity.url and '' != commodity.url">
+                url = #{commodity.url},
+            </if>
+            <if test="null != commodity.intro and '' != commodity.intro">
+                intro = #{commodity.intro},
+            </if>
+        </set>
+        WHERE
+            id = #{commodity.id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM commodity WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT
+            COUNT(id)
+        FROM
+            commodity
+        <if test="null != storeId">
+        WHERE
+            storeId = #{storeId}
+        </if>
+    </select>
+</mapper>

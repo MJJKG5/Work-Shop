@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.shop.repository.OrderMapper">
+    <resultMap id="orderMap" type="com.gp.shop.model.Order">
+        <id column="id" property="id"/>
+        <result column="commId" property="commId"/>
+        <result column="status" property="status"/>
+        <result column="isReviews" property="isReviews"/>
+        <result column="number" property="number"/>
+        <result column="unitPrice" property="unitPrice"/>
+        <result column="totalPrice" property="totalPrice"/>
+        <result column="createTime" property="createTime"/>
+        <result column="accountId" property="accountId"/>
+        <result column="name" property="name"/>
+        <result column="url" property="url"/>
+    </resultMap>
+
+    <sql id="orderList">id, commId, status, isReviews, `number`, unitPrice, totalPrice, createTime, accountId</sql>
+
+    <select id="queryByList" resultMap="orderMap">
+        SELECT
+            o.id AS id,
+            o.commId AS commId,
+            o.status AS status,
+            o.isReviews AS isReviews,
+            o.number AS number,
+            o.unitPrice AS unitPrice,
+            o.totalPrice AS totalPrice,
+            o.createTime AS createTime,
+            o.accountId AS accountId,
+            c.name AS name,
+            c.url AS url
+        FROM
+            `order` o
+        JOIN
+            commodity c
+        ON
+            o.commId = c.id
+        WHERE
+            o.accountId = #{accountId}
+        LIMIT
+            #{page.index}, #{page.pageSize}
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `order`
+            (commId, `number`, unitPrice, totalPrice, accountId)
+        VALUES
+            (#{order.commId}, #{order.number}, #{order.unitPrice}, #{order.totalPrice}, #{order.accountId})
+    </insert>
+
+    <insert id="adds">
+        INSERT INTO `order`
+            (commId, `number`, unitPrice, totalPrice, accountId)
+        VALUES
+        <foreach collection="orders" index="index" item="item" separator=",">
+            (#{item.commId}, #{item.number}, #{item.unitPrice}, #{item.totalPrice}, #{item.accountId})
+        </foreach>
+    </insert>
+
+    <update id="updateById">
+        UPDATE
+            `order`
+        SET
+            isReviews = #{isReviews}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM
+            `order`
+        WHERE
+            id
+        IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(id) FROM `order`
+    </select>
+</mapper>
